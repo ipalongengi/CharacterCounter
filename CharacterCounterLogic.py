@@ -43,8 +43,8 @@ def genSortedFrequency(fileName):
     return sortedFreq
 
 def genFreqPercentage (histogramList, numOfSlices):
-    # Return a 2-tuple list that contains the characters and their percentages of occurrences
-    # find ht e
+    # Return a 2-tuple list that contains the characters and their percentage of occurrences
+    # It also calculates and append the remaining percentages for "All other characters"
     totalSumOfChars = totalChars(histogramList)
     partialSumOfChars = partialChars(histogramList, numOfSlices)
 
@@ -54,17 +54,20 @@ def genFreqPercentage (histogramList, numOfSlices):
     return percentageList
 
 
-def genPieChart (piechart, sliceColor, radius):
-    assert (len(piechart) == len(sliceColor))
+def genPieChart (charFreqList, sliceColor, radius):
+    # Generate a pie chart of a specified radius from the character-frequency percentage tuple in charFreqList
+    # whose slices are filled in with colors from sliceColor list
+    assert (len(charFreqList) == len(sliceColor))
+
     t.reset()
     t.penup()
-    t.goto (0, -300)
+    t.goto (0, -150)    # Move down 150 px from the center to accommodate different monitor dimensions
     t.pendown()
-    t.circle(radius)
-    print(len(piechart))
-    for i in range(len(piechart)):
-        sliceDegree = piechart[i][1]*360
-        sliceLabel = piechart[i][0]
+    sumDegree = 0       # Keeps track of how many degrees of the pie chart has been drawn
+    for i in range(len(charFreqList)):
+        sliceDegree = charFreqList[i][1] * 360
+        sumDegree = sumDegree + sliceDegree
+        sliceLabel = charFreqList[i][0]
 
         if sliceLabel == ' ':
             sliceLabel = "'space'"
@@ -82,11 +85,16 @@ def genPieChart (piechart, sliceColor, radius):
         t.left(90)
         t.circle(radius, (sliceDegree))
         t.right(90)
-        t.fd(150)
+        # Draw the label for the slice
+        t.forward(60)
         t.color("black")
-        t.write(sliceLabel + ', ' + str(round((piechart[i][1]*100),2)) + '%', False, "left", ("Arial", 14, "normal"))
+        # Append and arrange the label location for a pie slice
+        if sumDegree < 180:
+            t.write(sliceLabel + ', ' + str(round((charFreqList[i][1] * 100), 2)) + '%', False, "left", ("Courier New", 10, "normal underline"))
+        else:
+            t.write(sliceLabel + ', ' + str(round((charFreqList[i][1] * 100), 2)) + '%', False, "right", ("Courier New", 10, "normal underline"))
         t.color(sliceColor[i])
-        t.backward(150)
+        t.backward(60)
         t.left(90)
     t.mainloop()
 
@@ -95,4 +103,4 @@ def drawPieChart (fileName, numOfSlices):
     charPercentage = genFreqPercentage(charFrequency, numOfSlices)
     print(charPercentage)
     sliceColors = genColorList(numOfSlices)
-    genPieChart(charPercentage, sliceColors, 350)
+    genPieChart(charPercentage, sliceColors, 150)
