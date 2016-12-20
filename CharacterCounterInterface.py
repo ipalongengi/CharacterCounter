@@ -1,10 +1,12 @@
 from tkinter import *
 import CharacterCounterLogic as makePiechart
 
+# Execute the method that draws the frequency pie chart. The file to be analyzed is 'Words.txt'
 def buttonClicked():
     global numOfSlices
     makePiechart.drawPieChart('Words.txt', numOfSlices.get())
 
+# the GUI that asks the user to enter the number of pie slices to be generated
 root = Tk()
 root.wm_title("Character Counter v1.0")
 numOfSlices = IntVar()
